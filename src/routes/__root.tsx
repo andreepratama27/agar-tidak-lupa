@@ -6,6 +6,8 @@ import {
 } from "@tanstack/react-router";
 
 import ConvexProvider from "../integrations/convex/provider";
+import { ThemeProvider } from "../components/ThemeProvider";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 import appCss from "../styles.css?url";
 
@@ -37,16 +39,19 @@ export const Route = createRootRoute({
 
 function RootLayout() {
 	return (
-		<div className="min-h-screen bg-amber-50">
-			<header className="border-b-4 border-black bg-yellow-300 px-6 py-4">
-				<h1 className="text-3xl font-extrabold tracking-tight text-black">
-					Agar Tidak Lupa
-				</h1>
-			</header>
-			<main className="mx-auto max-w-2xl px-4 py-8">
-				<Outlet />
-			</main>
-		</div>
+		<ThemeProvider>
+			<div className="min-h-screen bg-amber-50 transition-colors dark:bg-gray-950">
+				<div className="mx-auto flex max-w-2xl items-center justify-between px-4 pt-6 pb-2">
+					<p className="inline-block rotate-[-1deg] border-3 border-black bg-yellow-300 px-3 py-1 text-sm font-extrabold uppercase tracking-widest text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-amber-200/60 dark:bg-gray-800 dark:text-amber-200 dark:shadow-[3px_3px_0px_0px_rgba(253,230,138,0.5)]">
+						Agar Tidak Lupa ✏️
+					</p>
+					<ThemeToggle />
+				</div>
+				<main className="mx-auto max-w-2xl px-4 py-6">
+					<Outlet />
+				</main>
+			</div>
+		</ThemeProvider>
 	);
 }
 

@@ -9,4 +9,8 @@ export default defineSchema({
 		label: v.string(),
 		savedAt: v.number(),
 	}),
+	labels: defineTable({
+		name: v.string(),
+		color: v.string(),
+	}),
 })
