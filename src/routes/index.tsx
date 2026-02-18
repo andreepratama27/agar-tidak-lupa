@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { LinkForm } from "@/components/LinkForm";
+import { LinkList } from "@/components/LinkList";
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({ component: Home });
 
-function App() {
+function Home() {
 	return (
-		<div className="min-h-screen">
-			<p className="text-4xl font-bold">Agar Tidak Lupa</p>
+		<div className="flex flex-col gap-8">
+			<LinkForm />
+			<LinkList />
 		</div>
 	);
 }

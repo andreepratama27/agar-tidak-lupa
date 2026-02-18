@@ -1,0 +1,111 @@
+## Codebase Patterns
+- TanStack Router root route uses `component` (for layout with `<Outlet />`) and `shellComponent` (for HTML document wrapper)
+- Neo Brutalism style: bold borders (2-4px black), flat colors (yellow-300 header, amber-50 bg), no rounded corners, extrabold fonts
+- Convex schema uses `defineSchema`/`defineTable` from `convex/server`, validators from `convex/values` (`v.string()`, `v.optional()`, etc.)
+- Convex functions use `query`/`mutation`/`action` from `convex/_generated/server` with explicit `args` validators
+- Convex actions support `fetch`, `AbortController`, `setTimeout` — use for HTTP calls and side effects
+- Tabs for indentation, double quotes (Biome formatter)
+- Pre-existing lint errors in `vite.config.ts`, `src/components/Header.tsx`, `src/integrations/convex/provider.tsx` — not introduced by this work
+- Convex React hooks: `useAction` for actions, `useMutation` for mutations, `useQuery` for queries — all from `convex/react`
+- API references: import `api` from `../../convex/_generated/api` (or use path alias) — auto-generated types reference functions by module.name (e.g., `api.links.fetchMetadata`)
+- Demo files were in `src/routes/demo/` and `convex/todos.ts` — both removed as part of schema cleanup
+- Removing a table from schema requires also removing/updating all files that reference it for typecheck to pass
+- Use `Doc<"tableName">` from `convex/_generated/dataModel` to explicitly type Convex document parameters when TS inference fails
+
+---
+
+## 2026-02-18 - US-001
+Thread: https://ampcode.com/threads/T-019c710d-17ce-708d-b3ec-d3cdd79c6617
+- Created `links` table in `convex/schema.ts` with fields: url, title, favicon (optional), label, savedAt
+- Removed `todos` and `products` tables from schema
+- Removed `convex/todos.ts` (orphaned by schema removal — also required by US-002)
+- Removed `src/routes/demo/` directory (orphaned by schema removal — also required by US-004)
+- Files changed: `convex/schema.ts`, deleted `convex/todos.ts`, deleted `src/routes/demo/*`
+- **Learnings for future iterations:**
+  - Removing tables from Convex schema cascades — all files referencing those tables must be updated/removed for typecheck to pass
+  - US-002 (remove todos.ts) and US-004 (remove demo dir) are partially done since those files had to be removed for typecheck
+  - Pre-existing lint errors exist but are not blockers for new work
+---
+
+## 2026-02-18 - US-002
+Thread: https://ampcode.com/threads/T-019c710e-f056-763e-85f8-1b83427b34c5
+- Created `convex/links.ts` with `list` query (ordered by `savedAt` desc), `add` mutation, and `remove` mutation
+- `convex/todos.ts` was already removed in US-001 (schema cascading)
+- Files changed: `convex/links.ts` (created)
+- **Learnings for future iterations:**
+  - Convex `order("desc")` on a query sorts by `_creationTime` desc by default; for custom sort fields, an index would be needed, but since `savedAt` ≈ `_creationTime`, using default order is sufficient
+  - Biome config only includes `src/` files — convex files are not linted by biome
+  - `v.id("tableName")` is the correct validator for document IDs in mutation args
+- Convex `action` (for side effects like HTTP fetches) is imported from `_generated/server` alongside `query`/`mutation`
+- Actions use `_ctx` (unused context) since they don't access the DB directly
+- Convex actions run in a Node-like environment with `fetch` and `AbortController` available
+
+---
+
+## 2026-02-18 - US-003
+Thread: https://ampcode.com/threads/T-019c710f-f3a4-705c-a207-9ced103412d7
+- Created `fetchMetadata` action in `convex/links.ts` that fetches a URL and extracts title and favicon
+- Parses `<title>` tag from HTML, extracts favicon from `<link rel="icon">` with fallback to Google favicons API
+- Handles invalid URLs, fetch failures, and timeouts (5s via AbortController)
+- Resolves relative favicon URLs to absolute
+- Files changed: `convex/links.ts`
+- **Learnings for future iterations:**
+  - Convex actions support `fetch`, `AbortController`, `setTimeout` out of the box
+  - Favicon `<link>` tags can have attributes in either order (rel before href or href before rel) — need two regex patterns
+  - Relative favicon URLs need resolution (protocol-relative `//`, root-relative `/`, and bare paths)
+---
+
+## 2026-02-18 - US-004
+Thread: https://ampcode.com/threads/T-019c7111-51c7-73c1-a3d4-c50d75323f49
+- Updated `src/routes/__root.tsx`: added `RootLayout` component with Neo Brutalism header (yellow-300 bg, border-b-4 black) and `<Outlet />`, removed TanStackDevtools imports, set page title to "Agar Tidak Lupa"
+- Updated `src/routes/index.tsx`: simplified to a placeholder page with descriptive text
+- `src/routes/demo/` was already removed in US-001
+- Files changed: `src/routes/__root.tsx`, `src/routes/index.tsx`
+- **Learnings for future iterations:**
+  - TanStack Router root route separates `component` (app layout with Outlet) from `shellComponent` (HTML document wrapper)
+  - `Outlet` is imported from `@tanstack/react-router`, not a separate package
+  - The existing `Header.tsx` component is unused scaffold — can be cleaned up in future
+---
+
+## 2026-02-18 - US-005
+Thread: https://ampcode.com/threads/T-019c7113-42da-736f-96fa-b1d17b7dd39b
+- Created `src/components/LinkForm.tsx` with URL input, label selector (6 predefined labels), and Save button
+- On submit: calls `fetchMetadata` action then `add` mutation; clears input on success
+- Save button disabled while loading or when URL is empty; shows "Saving..." text during loading
+- Neo Brutalism styling: bold 2px black borders, flat colors, no rounded corners, strong drop shadow on Save button
+- Updated `src/routes/index.tsx` to render `LinkForm` at the top
+- Files changed: `src/components/LinkForm.tsx` (created), `src/routes/index.tsx` (updated)
+- **Learnings for future iterations:**
+  - Convex React hooks (`useAction`, `useMutation`, `useQuery`) are imported from `convex/react`
+  - `api` object is imported from `convex/_generated/api` and provides typed references like `api.links.fetchMetadata`
+  - The generated `api.d.ts` may be stale (references deleted modules) — it auto-regenerates when `npx convex dev` runs, but TypeScript still works via type inference
+  - Biome requires imports sorted alphabetically — `convex/react` before `react`
+  - Label selector uses toggle-style buttons instead of a dropdown for faster UX
+---
+
+## 2026-02-18 - US-006
+Thread: https://ampcode.com/threads/T-019c7115-bd66-7146-bf46-8eba629ee616
+- Created `src/components/LinkList.tsx` that queries `links:list` and renders each link as a card
+- Each card shows favicon (16x16), title (clickable, opens in new tab), truncated URL, and label badge with distinct color per label
+- Shows "Loading links..." while query is pending, and "No links saved yet. Paste one above!" when empty
+- Neo Brutalism styling: border-4 black, shadow-[4px_4px_0px], no rounded corners
+- Updated `src/routes/index.tsx` to render `LinkList` below `LinkForm`
+- Files changed: `src/components/LinkList.tsx` (created), `src/routes/index.tsx` (updated)
+- **Learnings for future iterations:**
+  - Convex cloud deployment may be down/misconfigured — 404 on team_and_project endpoint prevents `npx convex dev` from syncing; code still type-checks correctly
+  - Use `Doc<"tableName">` from `convex/_generated/dataModel` to type map callback parameters when TypeScript can't infer them
+  - Label color mapping uses a simple `Record<string, string>` for label → Tailwind bg class mapping
+---
+
+## 2026-02-18 - US-007
+Thread: https://ampcode.com/threads/T-019c7118-a87e-7098-bf81-2c53a8cfa7db
+- Added delete button with `Trash2` icon from lucide-react to each link card in `LinkList.tsx`
+- Clicking delete calls `links:remove` mutation immediately (no confirmation dialog)
+- Link disappears in real-time via Convex reactivity
+- Neo Brutalism styling: red-200 bg, border-2 black, hover red-400
+- Files changed: `src/components/LinkList.tsx`
+- **Learnings for future iterations:**
+  - The `remove` mutation already existed from US-002, so this story only required frontend changes
+  - `useMutation` returns a callable function that accepts the mutation args directly
+  - Convex cloud deployment remains unsynced — browser shows "Could not find public function" error, but code compiles and type-checks correctly
+---

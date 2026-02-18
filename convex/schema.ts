@@ -1,14 +1,16 @@
-import { defineSchema, defineTable } from 'convex/server'
-import { v } from 'convex/values'
+import { defineSchema, defineTable } from "convex/server"
+import { v } from "convex/values"
 
 export default defineSchema({
-  products: defineTable({
-    title: v.string(),
-    imageId: v.string(),
-    price: v.number(),
-  }),
-  todos: defineTable({
-    text: v.string(),
-    completed: v.boolean(),
-  }),
+	links: defineTable({
+		url: v.string(),
+		title: v.string(),
+		favicon: v.optional(v.string()),
+		label: v.string(),
+		savedAt: v.number(),
+	}),
+	labels: defineTable({
+		name: v.string(),
+		color: v.string(),
+	}),
 })
