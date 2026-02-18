@@ -96,3 +96,16 @@ Thread: https://ampcode.com/threads/T-019c7115-bd66-7146-bf46-8eba629ee616
   - Use `Doc<"tableName">` from `convex/_generated/dataModel` to type map callback parameters when TypeScript can't infer them
   - Label color mapping uses a simple `Record<string, string>` for label → Tailwind bg class mapping
 ---
+
+## 2026-02-18 - US-007
+Thread: https://ampcode.com/threads/T-019c7118-a87e-7098-bf81-2c53a8cfa7db
+- Added delete button with `Trash2` icon from lucide-react to each link card in `LinkList.tsx`
+- Clicking delete calls `links:remove` mutation immediately (no confirmation dialog)
+- Link disappears in real-time via Convex reactivity
+- Neo Brutalism styling: red-200 bg, border-2 black, hover red-400
+- Files changed: `src/components/LinkList.tsx`
+- **Learnings for future iterations:**
+  - The `remove` mutation already existed from US-002, so this story only required frontend changes
+  - `useMutation` returns a callable function that accepts the mutation args directly
+  - Convex cloud deployment remains unsynced — browser shows "Could not find public function" error, but code compiles and type-checks correctly
+---
