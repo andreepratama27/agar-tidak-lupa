@@ -1,0 +1,118 @@
+{
+	"project": "Agar Tidak Lupa",
+	"branchName": "ralph/link-saver",
+	"description": "Minimalist personal link saver with predefined labels, auto-fetched metadata, Neo Brutalism UI, and Convex backend",
+	"userStories": [
+		{
+			"id": "US-001",
+			"title": "Define links schema in Convex",
+			"description": "As a developer, I need a database schema to persist links and their labels so data survives across sessions.",
+			"acceptanceCriteria": [
+				"Create a `links` table in `convex/schema.ts` with fields: `url` (string), `title` (string), `favicon` (optional string), `label` (string), `savedAt` (number, epoch ms)",
+				"Remove the demo `todos` and `products` tables from `convex/schema.ts`",
+				"Typecheck passes"
+			],
+			"priority": 1,
+			"passes": true,
+			"notes": ""
+		},
+		{
+			"id": "US-002",
+			"title": "Create Convex queries and mutations for links",
+			"description": "As a developer, I need backend functions to list, add, and remove links.",
+			"acceptanceCriteria": [
+				"Create `convex/links.ts` with a `list` query that returns all links ordered by `savedAt` descending",
+				"Create an `add` mutation that accepts `url`, `title`, `favicon` (optional), and `label`, and inserts with `savedAt` set to `Date.now()`",
+				"Create a `remove` mutation that accepts a link `_id` and deletes it",
+				"Remove `convex/todos.ts`",
+				"Typecheck passes"
+			],
+			"priority": 2,
+			"passes": true,
+			"notes": ""
+		},
+		{
+			"id": "US-003",
+			"title": "Create metadata fetching action",
+			"description": "As a user, I want the app to auto-fetch page title and favicon so I don't type them manually.",
+			"acceptanceCriteria": [
+				"Create a Convex action `links:fetchMetadata` that accepts a `url` string and returns `{ title: string, favicon: string | null }`",
+				"Extract `<title>` from the fetched HTML",
+				"Extract favicon from `<link rel=\"icon\">` or fall back to `https://www.google.com/s2/favicons?domain=HOSTNAME&sz=32`",
+				"If fetch fails (CORS, timeout, error), return URL hostname as title and Google favicon fallback",
+				"Timeout after 5 seconds",
+				"Typecheck passes"
+			],
+			"priority": 3,
+			"passes": true,
+			"notes": ""
+		},
+		{
+			"id": "US-004",
+			"title": "Clean up demo files and set up root layout",
+			"description": "As a developer, I need to remove scaffold/demo files and prepare the app shell.",
+			"acceptanceCriteria": [
+				"Remove `src/routes/demo/` directory",
+				"Update `src/routes/__root.tsx` to render a minimal Neo Brutalism layout with app title 'Agar Tidak Lupa' and an Outlet",
+				"Update `src/routes/index.tsx` to render a placeholder page",
+				"App loads without errors on `npm run dev`",
+				"Typecheck passes",
+				"Verify in browser using dev-browser skill"
+			],
+			"priority": 4,
+			"passes": true,
+			"notes": ""
+		},
+		{
+			"id": "US-005",
+			"title": "Build the link input form",
+			"description": "As a user, I want to paste a URL and pick a label so I can save a link quickly.",
+			"acceptanceCriteria": [
+				"Create `src/components/LinkForm.tsx` with a URL input (placeholder 'Paste a link...'), a label selector with predefined options (Article, Video, Tool, Reference, Inspiration, Other), and a Save button",
+				"On submit: call `links:fetchMetadata` action to get title/favicon, then call `links:add` mutation",
+				"Input clears after successful save",
+				"Save button shows disabled/loading state while fetching metadata",
+				"Neo Brutalism styling: bold 2px black borders, flat background colors, no rounded corners",
+				"Render the form at the top of `src/routes/index.tsx`",
+				"Typecheck passes",
+				"Verify in browser using dev-browser skill"
+			],
+			"priority": 5,
+			"passes": false,
+			"notes": ""
+		},
+		{
+			"id": "US-006",
+			"title": "Display saved links list",
+			"description": "As a user, I want to see all my saved links in a clean list so I can find and revisit them.",
+			"acceptanceCriteria": [
+				"Create `src/components/LinkList.tsx` that queries `links:list` and renders each link as a card",
+				"Each card shows: favicon (16x16), title, truncated URL, and a label badge with a distinct flat background color per label",
+				"Clicking the title/URL opens the link in a new tab with `target='_blank'` and `rel='noopener noreferrer'`",
+				"Show empty state message 'No links saved yet. Paste one above!' when list is empty",
+				"Neo Brutalism styling: cards with bold borders, strong drop shadows",
+				"Render the list below the form in `src/routes/index.tsx`",
+				"Typecheck passes",
+				"Verify in browser using dev-browser skill"
+			],
+			"priority": 6,
+			"passes": false,
+			"notes": ""
+		},
+		{
+			"id": "US-007",
+			"title": "Add delete link functionality",
+			"description": "As a user, I want to delete a link I no longer need so my list stays clean.",
+			"acceptanceCriteria": [
+				"Each link card has a delete icon button using `Trash2` from lucide-react",
+				"Clicking delete calls `links:remove` mutation immediately (no confirmation dialog)",
+				"Link disappears from the list in real time via Convex reactivity",
+				"Typecheck passes",
+				"Verify in browser using dev-browser skill"
+			],
+			"priority": 7,
+			"passes": false,
+			"notes": ""
+		}
+	]
+}

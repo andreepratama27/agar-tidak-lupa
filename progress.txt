@@ -1,0 +1,65 @@
+## Codebase Patterns
+- TanStack Router root route uses `component` (for layout with `<Outlet />`) and `shellComponent` (for HTML document wrapper)
+- Neo Brutalism style: bold borders (2-4px black), flat colors (yellow-300 header, amber-50 bg), no rounded corners, extrabold fonts
+- Convex schema uses `defineSchema`/`defineTable` from `convex/server`, validators from `convex/values` (`v.string()`, `v.optional()`, etc.)
+- Convex functions use `query`/`mutation`/`action` from `convex/_generated/server` with explicit `args` validators
+- Convex actions support `fetch`, `AbortController`, `setTimeout` — use for HTTP calls and side effects
+- Tabs for indentation, double quotes (Biome formatter)
+- Pre-existing lint errors in `vite.config.ts`, `src/components/Header.tsx`, `src/integrations/convex/provider.tsx` — not introduced by this work
+- Demo files were in `src/routes/demo/` and `convex/todos.ts` — both removed as part of schema cleanup
+- Removing a table from schema requires also removing/updating all files that reference it for typecheck to pass
+
+---
+
+## 2026-02-18 - US-001
+Thread: https://ampcode.com/threads/T-019c710d-17ce-708d-b3ec-d3cdd79c6617
+- Created `links` table in `convex/schema.ts` with fields: url, title, favicon (optional), label, savedAt
+- Removed `todos` and `products` tables from schema
+- Removed `convex/todos.ts` (orphaned by schema removal — also required by US-002)
+- Removed `src/routes/demo/` directory (orphaned by schema removal — also required by US-004)
+- Files changed: `convex/schema.ts`, deleted `convex/todos.ts`, deleted `src/routes/demo/*`
+- **Learnings for future iterations:**
+  - Removing tables from Convex schema cascades — all files referencing those tables must be updated/removed for typecheck to pass
+  - US-002 (remove todos.ts) and US-004 (remove demo dir) are partially done since those files had to be removed for typecheck
+  - Pre-existing lint errors exist but are not blockers for new work
+---
+
+## 2026-02-18 - US-002
+Thread: https://ampcode.com/threads/T-019c710e-f056-763e-85f8-1b83427b34c5
+- Created `convex/links.ts` with `list` query (ordered by `savedAt` desc), `add` mutation, and `remove` mutation
+- `convex/todos.ts` was already removed in US-001 (schema cascading)
+- Files changed: `convex/links.ts` (created)
+- **Learnings for future iterations:**
+  - Convex `order("desc")` on a query sorts by `_creationTime` desc by default; for custom sort fields, an index would be needed, but since `savedAt` ≈ `_creationTime`, using default order is sufficient
+  - Biome config only includes `src/` files — convex files are not linted by biome
+  - `v.id("tableName")` is the correct validator for document IDs in mutation args
+- Convex `action` (for side effects like HTTP fetches) is imported from `_generated/server` alongside `query`/`mutation`
+- Actions use `_ctx` (unused context) since they don't access the DB directly
+- Convex actions run in a Node-like environment with `fetch` and `AbortController` available
+
+---
+
+## 2026-02-18 - US-003
+Thread: https://ampcode.com/threads/T-019c710f-f3a4-705c-a207-9ced103412d7
+- Created `fetchMetadata` action in `convex/links.ts` that fetches a URL and extracts title and favicon
+- Parses `<title>` tag from HTML, extracts favicon from `<link rel="icon">` with fallback to Google favicons API
+- Handles invalid URLs, fetch failures, and timeouts (5s via AbortController)
+- Resolves relative favicon URLs to absolute
+- Files changed: `convex/links.ts`
+- **Learnings for future iterations:**
+  - Convex actions support `fetch`, `AbortController`, `setTimeout` out of the box
+  - Favicon `<link>` tags can have attributes in either order (rel before href or href before rel) — need two regex patterns
+  - Relative favicon URLs need resolution (protocol-relative `//`, root-relative `/`, and bare paths)
+---
+
+## 2026-02-18 - US-004
+Thread: https://ampcode.com/threads/T-019c7111-51c7-73c1-a3d4-c50d75323f49
+- Updated `src/routes/__root.tsx`: added `RootLayout` component with Neo Brutalism header (yellow-300 bg, border-b-4 black) and `<Outlet />`, removed TanStackDevtools imports, set page title to "Agar Tidak Lupa"
+- Updated `src/routes/index.tsx`: simplified to a placeholder page with descriptive text
+- `src/routes/demo/` was already removed in US-001
+- Files changed: `src/routes/__root.tsx`, `src/routes/index.tsx`
+- **Learnings for future iterations:**
+  - TanStack Router root route separates `component` (app layout with Outlet) from `shellComponent` (HTML document wrapper)
+  - `Outlet` is imported from `@tanstack/react-router`, not a separate package
+  - The existing `Header.tsx` component is unused scaffold — can be cleaned up in future
+---
