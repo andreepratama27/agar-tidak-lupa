@@ -1,6 +1,9 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import {
+	createRootRoute,
+	HeadContent,
+	Outlet,
+	Scripts,
+} from "@tanstack/react-router";
 
 import ConvexProvider from "../integrations/convex/provider";
 
@@ -17,7 +20,7 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "Agar Tidak Lupa",
 			},
 		],
 		links: [
@@ -28,8 +31,24 @@ export const Route = createRootRoute({
 		],
 	}),
 
+	component: RootLayout,
 	shellComponent: RootDocument,
 });
+
+function RootLayout() {
+	return (
+		<div className="min-h-screen bg-amber-50">
+			<header className="border-b-4 border-black bg-yellow-300 px-6 py-4">
+				<h1 className="text-3xl font-extrabold tracking-tight text-black">
+					Agar Tidak Lupa
+				</h1>
+			</header>
+			<main className="mx-auto max-w-2xl px-4 py-8">
+				<Outlet />
+			</main>
+		</div>
+	);
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
@@ -38,20 +57,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<ConvexProvider>
-					{children}
-					<TanStackDevtools
-						config={{
-							position: "bottom-right",
-						}}
-						plugins={[
-							{
-								name: "Tanstack Router",
-								render: <TanStackRouterDevtoolsPanel />,
-							},
-						]}
-					/>
-				</ConvexProvider>
+				<ConvexProvider>{children}</ConvexProvider>
 				<Scripts />
 			</body>
 		</html>
