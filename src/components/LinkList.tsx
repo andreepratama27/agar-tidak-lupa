@@ -1,4 +1,5 @@
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { Trash2 } from "lucide-react";
 import type { Doc } from "../../convex/_generated/dataModel";
 import { api } from "../../convex/_generated/api";
 
@@ -13,6 +14,7 @@ const LABEL_COLORS: Record<string, string> = {
 
 export function LinkList() {
 	const links = useQuery(api.links.list);
+	const removeLink = useMutation(api.links.remove);
 
 	if (links === undefined) {
 		return (
@@ -62,7 +64,14 @@ export function LinkList() {
 					>
 						{link.label}
 					</span>
-				</div>
+					<button
+						type="button"
+						onClick={() => removeLink({ id: link._id })}
+						className="shrink-0 border-2 border-black bg-red-200 p-2 font-extrabold hover:bg-red-400"
+					>
+						<Trash2 size={16} />
+					</button>
+					</div>
 			))}
 		</div>
 	);
