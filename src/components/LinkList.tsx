@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "convex/react";
-import { Plus, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { LayoutGrid, LayoutList, Plus, Trash2, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Doc } from "../../convex/_generated/dataModel";
 import {
@@ -37,8 +37,18 @@ export function LinkList() {
 	const [newLabelName, setNewLabelName] = useState("");
 	const [newLabelColor, setNewLabelColor] = useState(COLOR_OPTIONS[0].value);
 
-	const [renamingLabel, setRenamingLabel] = useState<Doc<"labels"> | null>(null);
+	const [layout, setLayout] = useState<"list" | "grid">(
+		() => (localStorage.getItem("link-layout") as "list" | "grid") ?? "list",
+	);
+
+	const [renamingLabel, setRenamingLabel] = useState<Doc<"labels"> | null>(
+		null,
+	);
 	const [renameValue, setRenameValue] = useState("");
+
+	useEffect(() => {
+		localStorage.setItem("link-layout", layout);
+	}, [layout]);
 
 	const handleCreateLabel = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -94,70 +104,100 @@ export function LinkList() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			{labels && labels.length > 0 && (
+			<div className="flex items-center justify-between gap-2">
 				<div className="flex flex-wrap gap-2">
+					{labels && labels.length > 0 && (
+						<>
+							<button
+								type="button"
+								onClick={() => setFilterLabel("")}
+								className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
+									filterLabel === ""
+										? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white/60 dark:bg-white/15 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"
+										: "border-black bg-white text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+								}`}
+							>
+								All
+							</button>
+							{labels.map((l) => (
+								<ContextMenu key={l._id}>
+									<ContextMenuTrigger asChild>
+										<button
+											type="button"
+											onClick={() =>
+												setFilterLabel(filterLabel === l.name ? "" : l.name)
+											}
+											className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
+												filterLabel === l.name
+													? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white/60 dark:bg-white/15 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"
+													: "border-black bg-white text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+											}`}
+										>
+											{l.name}
+										</button>
+									</ContextMenuTrigger>
+									<ContextMenuContent>
+										<ContextMenuItem
+											onSelect={() => {
+												setRenamingLabel(l);
+												setRenameValue(l.name);
+											}}
+										>
+											Rename
+										</ContextMenuItem>
+										<ContextMenuSeparator />
+										<ContextMenuItem
+											className="text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30"
+											onSelect={() => handleDeleteLabel(l)}
+										>
+											Delete
+										</ContextMenuItem>
+									</ContextMenuContent>
+								</ContextMenu>
+							))}
+							<button
+								type="button"
+								onClick={() => setShowModal(true)}
+								className="border-2 border-dashed border-black bg-white px-3 py-1 text-sm font-bold text-black transition-all hover:border-solid hover:bg-yellow-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-white/40 dark:hover:bg-gray-700"
+							>
+								<Plus size={14} className="inline -mt-0.5" />
+							</button>
+						</>
+					)}
+				</div>
+				<div className="flex shrink-0 gap-1">
 					<button
 						type="button"
-						onClick={() => setFilterLabel("")}
-						className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
-							filterLabel === ""
-								? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white/60 dark:bg-white/15 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"
-								: "border-black bg-white text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+						onClick={() => setLayout("list")}
+						title="List view"
+						className={`border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all dark:border-white/60 dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] ${
+							layout === "list"
+								? "bg-black text-white dark:bg-white dark:text-black"
+								: "bg-white text-black hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
 						}`}
 					>
-						All
+						<LayoutList size={16} />
 					</button>
-					{labels.map((l) => (
-						<ContextMenu key={l._id}>
-							<ContextMenuTrigger asChild>
-								<button
-									type="button"
-									onClick={() =>
-										setFilterLabel(filterLabel === l.name ? "" : l.name)
-									}
-									className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
-										filterLabel === l.name
-											? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white/60 dark:bg-white/15 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"
-											: "border-black bg-white text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-									}`}
-								>
-									{l.name}
-								</button>
-							</ContextMenuTrigger>
-							<ContextMenuContent>
-								<ContextMenuItem
-									onSelect={() => {
-										setRenamingLabel(l);
-										setRenameValue(l.name);
-									}}
-								>
-									Rename
-								</ContextMenuItem>
-								<ContextMenuSeparator />
-								<ContextMenuItem
-									className="text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30"
-									onSelect={() => handleDeleteLabel(l)}
-								>
-									Delete
-								</ContextMenuItem>
-							</ContextMenuContent>
-						</ContextMenu>
-					))}
 					<button
 						type="button"
-						onClick={() => setShowModal(true)}
-						className="border-2 border-dashed border-black bg-white px-3 py-1 text-sm font-bold text-black transition-all hover:border-solid hover:bg-yellow-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-white/40 dark:hover:bg-gray-700"
+						onClick={() => setLayout("grid")}
+						title="Grid view"
+						className={`border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all dark:border-white/60 dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] ${
+							layout === "grid"
+								? "bg-black text-white dark:bg-white dark:text-black"
+								: "bg-white text-black hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+						}`}
 					>
-						<Plus size={14} className="inline -mt-0.5" />
+						<LayoutGrid size={16} />
 					</button>
 				</div>
-			)}
+			</div>
 			{filteredLinks.length === 0 ? (
 				<p className="text-lg font-bold text-gray-500 dark:text-gray-400">
 					No links saved yet. Paste one above!
 				</p>
-			) : (
-				<div className="flex flex-col gap-4">
+			) : layout === "list" ? (
+				<div className="flex flex-col gap-3">
 					{filteredLinks.map((link: Doc<"links">) => (
 						<div
 							key={link._id}
@@ -198,6 +238,59 @@ export function LinkList() {
 								<Trash2 size={16} />
 							</button>
 						</div>
+					))}
+				</div>
+			) : (
+				<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+					{filteredLinks.map((link: Doc<"links">) => (
+						<a
+							key={link._id}
+							href={link.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="flex flex-col border-4 border-black bg-white p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white/30 dark:bg-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.15)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)]"
+						>
+							<div className="mb-2 flex items-start justify-between gap-1">
+								{link.favicon ? (
+									<img
+										src={link.favicon}
+										alt=""
+										width={16}
+										height={16}
+										className="mt-0.5 shrink-0"
+									/>
+								) : (
+									<span />
+								)}
+								<button
+									type="button"
+									onClick={(e) => {
+										e.preventDefault();
+										removeLink({ id: link._id });
+									}}
+									className="shrink-0 border-2 border-black bg-red-200 p-1 font-extrabold hover:bg-red-400 dark:border-red-400 dark:bg-red-900 dark:hover:bg-red-700"
+								>
+									<Trash2 size={12} />
+								</button>
+							</div>
+							<p className="mb-2 line-clamp-2 flex-1 text-sm font-extrabold text-black dark:text-gray-100">
+								{link.title}
+							</p>
+							<p className="mb-2 truncate text-xs font-bold text-gray-500 dark:text-gray-400">
+								{(() => {
+									try {
+										return new URL(link.url).hostname;
+									} catch {
+										return link.url;
+									}
+								})()}
+							</p>
+							<span
+								className={`self-start border-2 border-black px-2 py-0.5 text-xs font-extrabold dark:border-gray-600 ${labelColors[link.label] ?? "bg-gray-200"}`}
+							>
+								{link.label}
+							</span>
+						</a>
 					))}
 				</div>
 			)}
@@ -310,7 +403,10 @@ export function LinkList() {
 
 							<button
 								type="submit"
-								disabled={!renameValue.trim() || renameValue.trim() === renamingLabel.name}
+								disabled={
+									!renameValue.trim() ||
+									renameValue.trim() === renamingLabel.name
+								}
 								className="border-2 border-black bg-yellow-300 px-4 py-2 text-base font-extrabold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/30 dark:bg-white dark:text-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
 							>
 								Save
