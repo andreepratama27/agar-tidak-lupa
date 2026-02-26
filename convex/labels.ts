@@ -40,3 +40,31 @@ export const add = mutation({
 		})
 	},
 })
+
+export const rename = mutation({
+	args: {
+		id: v.id("labels"),
+		name: v.string(),
+	},
+	handler: async (ctx, args) => {
+		const label = await ctx.db.get(args.id)
+		if (!label) return
+		const oldName = label.name
+		await ctx.db.patch(args.id, { name: args.name })
+		const links = await ctx.db.query("links").collect()
+		for (const link of links) {
+			if (link.label === oldName) {
+				await ctx.db.patch(link._id, { label: args.name })
+			}
+		}
+	},
+})
+
+export const remove = mutation({
+	args: {
+		id: v.id("labels"),
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.delete(args.id)
+	},
+})
