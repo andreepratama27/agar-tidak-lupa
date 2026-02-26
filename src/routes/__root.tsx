@@ -22,7 +22,7 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "Agar Tidak Lupa",
+				title: "Agar Tidak Lupa | Link Saver yang gini - gini aja 😭",
 			},
 		],
 		links: [
