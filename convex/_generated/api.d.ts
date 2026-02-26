@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as todos from "../todos.js";
 import type * as labels from "../labels.js";
 import type * as links from "../links.js";
 
@@ -19,7 +18,6 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  todos: typeof todos;
   labels: typeof labels;
   links: typeof links;
 }>;
