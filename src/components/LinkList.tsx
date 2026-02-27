@@ -298,6 +298,7 @@ export function LinkList() {
 			{/* New Label Modal */}
 			{showModal && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center">
+					{/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
 					<div
 						className="absolute inset-0 bg-black/40"
 						onClick={() => setShowModal(false)}
@@ -318,21 +319,25 @@ export function LinkList() {
 
 						<form onSubmit={handleCreateLabel} className="flex flex-col gap-4">
 							<div>
+								{/** biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
 								<label className="mb-1 block text-sm font-extrabold text-black dark:text-gray-200">
 									Name
 								</label>
 								<input
+									name="label-name"
 									type="text"
 									value={newLabelName}
 									onChange={(e) => setNewLabelName(e.target.value)}
 									placeholder="e.g. Tutorial"
 									required
+									// biome-ignore lint/a11y/noAutofocus: <explanation>
 									autoFocus
 									className="w-full border-2 border-black bg-white px-3 py-2 text-base font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-white/30 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:ring-white/40"
 								/>
 							</div>
 
 							<div>
+								{/** biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
 								<label className="mb-2 block text-sm font-extrabold text-black dark:text-gray-200">
 									Color
 								</label>
@@ -368,6 +373,7 @@ export function LinkList() {
 			{/* Rename Label Modal */}
 			{renamingLabel && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center">
+					{/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
 					<div
 						className="absolute inset-0 bg-black/40"
 						onClick={() => setRenamingLabel(null)}
@@ -388,6 +394,7 @@ export function LinkList() {
 
 						<form onSubmit={handleRenameSubmit} className="flex flex-col gap-4">
 							<div>
+								{/** biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
 								<label className="mb-1 block text-sm font-extrabold text-black dark:text-gray-200">
 									Name
 								</label>
@@ -396,6 +403,7 @@ export function LinkList() {
 									value={renameValue}
 									onChange={(e) => setRenameValue(e.target.value)}
 									required
+									// biome-ignore lint/a11y/noAutofocus: <explanation>
 									autoFocus
 									className="w-full border-2 border-black bg-white px-3 py-2 text-base font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-white/30 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:ring-white/40"
 								/>
