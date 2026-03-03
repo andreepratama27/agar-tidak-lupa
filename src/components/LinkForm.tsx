@@ -57,15 +57,15 @@ export function LinkForm() {
 				}}
 				placeholder="Paste a link..."
 				required
-				className="w-full border-2 border-black bg-white px-4 py-3 text-lg font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-white/30 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:ring-white/40"
+				className="w-full border-2 border-black bg-white px-4 py-3 text-lg font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-yellow-300/40 dark:bg-[#0C0C0C] dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-yellow-300/60"
 			/>
 			<div
 				className={`overflow-hidden transition-all duration-300 ease-in-out ${
 					hasUrl ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
 				}`}
 			>
-				<div className="flex flex-wrap gap-2 border-t-2 border-black pt-3 dark:border-white/30">
-					<span className="font-extrabold text-sm self-center">Label:</span>
+				<div className="flex flex-wrap gap-2 border-t-2 border-black pt-3 dark:border-yellow-300/40">
+					<span className="font-extrabold text-sm self-center dark:text-neutral-100">Label:</span>
 					{labels?.map((l) => (
 						<button
 							key={l._id}
@@ -74,10 +74,10 @@ export function LinkForm() {
 							className={`border-2 border-black px-3 py-1 text-sm font-extrabold transition-all
 									${
 										label === l.name
-											? "bg-yellow-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-											: "bg-white hover:bg-yellow-100 dark:bg-gray-900 dark:text-gray-100"
+											? "bg-yellow-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(253,224,71,0.25)]"
+											: "bg-white hover:bg-yellow-100 dark:bg-[#141414] dark:text-neutral-100 dark:hover:bg-[#1a1a1a]"
 									}
-									dark:border-white/30`}
+									dark:border-yellow-300/40`}
 						>
 							{l.name}
 						</button>
@@ -87,7 +87,7 @@ export function LinkForm() {
 					<button
 						type="submit"
 						disabled={loading || !url.trim()}
-						className="border-2 border-black bg-black px-6 py-3 text-lg font-extrabold text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white/30 dark:bg-white dark:text-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
+						className="border-2 border-black bg-black px-6 py-3 text-lg font-extrabold text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/40 dark:bg-yellow-300 dark:text-black dark:shadow-[4px_4px_0px_0px_rgba(253,224,71,0.25)] dark:disabled:hover:shadow-[4px_4px_0px_0px_rgba(253,224,71,0.25)]"
 					>
 						{loading ? "Saving..." : "Save"}
 					</button>

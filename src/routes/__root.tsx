@@ -40,9 +40,9 @@ export const Route = createRootRoute({
 function RootLayout() {
 	return (
 		<ThemeProvider>
-			<div className="min-h-screen bg-amber-50 transition-colors dark:bg-gray-950">
+			<div className="min-h-screen bg-amber-50 transition-colors dark:bg-black">
 				<div className="mx-auto flex max-w-2xl items-center justify-between px-4 pt-6 pb-2">
-					<p className="inline-block rotate-[-1deg] border-3 border-black bg-yellow-300 px-3 py-1 text-sm font-extrabold uppercase tracking-widest text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-amber-200/60 dark:bg-gray-800 dark:text-amber-200 dark:shadow-[3px_3px_0px_0px_rgba(253,230,138,0.5)]">
+					<p className="inline-block rotate-[-1deg] border-3 border-black bg-yellow-300 px-3 py-1 text-sm font-extrabold uppercase tracking-widest text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/40 dark:bg-[#141414] dark:text-yellow-300 dark:shadow-[3px_3px_0px_0px_rgba(253,224,71,0.25)]">
 						Agar Tidak Lupa ✏️
 					</p>
 					<ThemeToggle />

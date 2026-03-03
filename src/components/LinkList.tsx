@@ -92,7 +92,7 @@ export function LinkList() {
 
 	if (links === undefined) {
 		return (
-			<p className="text-lg font-bold text-gray-500 dark:text-gray-400">
+			<p className="text-lg font-bold text-gray-500 dark:text-neutral-500">
 				Loading links...
 			</p>
 		);
@@ -113,8 +113,8 @@ export function LinkList() {
 								onClick={() => setFilterLabel("")}
 								className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
 									filterLabel === ""
-										? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white/60 dark:bg-white/15 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"
-										: "border-black bg-white text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+										? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/60 dark:bg-yellow-300/15 dark:text-yellow-300 dark:shadow-[2px_2px_0px_0px_rgba(253,224,71,0.25)]"
+										: "border-black bg-white text-black hover:bg-gray-100 dark:border-yellow-300/30 dark:bg-[#0C0C0C] dark:text-neutral-200 dark:hover:bg-[#141414]"
 								}`}
 							>
 								All
@@ -129,8 +129,8 @@ export function LinkList() {
 											}
 											className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
 												filterLabel === l.name
-													? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white/60 dark:bg-white/15 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"
-													: "border-black bg-white text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+													? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/60 dark:bg-yellow-300/15 dark:text-yellow-300 dark:shadow-[2px_2px_0px_0px_rgba(253,224,71,0.25)]"
+													: "border-black bg-white text-black hover:bg-gray-100 dark:border-yellow-300/30 dark:bg-[#0C0C0C] dark:text-neutral-200 dark:hover:bg-[#141414]"
 											}`}
 										>
 											{l.name}
@@ -158,7 +158,7 @@ export function LinkList() {
 							<button
 								type="button"
 								onClick={() => setShowModal(true)}
-								className="border-2 border-dashed border-black bg-white px-3 py-1 text-sm font-bold text-black transition-all hover:border-solid hover:bg-yellow-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-white/40 dark:hover:bg-gray-700"
+								className="border-2 border-dashed border-black bg-white px-3 py-1 text-sm font-bold text-black transition-all hover:border-solid hover:bg-yellow-100 dark:border-yellow-300/30 dark:bg-[#0C0C0C] dark:text-neutral-200 dark:hover:border-yellow-300/60 dark:hover:bg-[#141414]"
 							>
 								<Plus size={14} className="inline -mt-0.5" />
 							</button>
@@ -170,10 +170,10 @@ export function LinkList() {
 						type="button"
 						onClick={() => setLayout("list")}
 						title="List view"
-						className={`border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all dark:border-white/60 dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] ${
+						className={`border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all dark:border-yellow-300/60 dark:shadow-[2px_2px_0px_0px_rgba(253,224,71,0.25)] ${
 							layout === "list"
-								? "bg-black text-white dark:bg-white dark:text-black"
-								: "bg-white text-black hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+								? "bg-black text-white dark:bg-yellow-300 dark:text-black"
+								: "bg-white text-black hover:bg-gray-100 dark:bg-[#0C0C0C] dark:text-neutral-200 dark:hover:bg-[#141414]"
 						}`}
 					>
 						<LayoutList size={16} />
@@ -182,10 +182,10 @@ export function LinkList() {
 						type="button"
 						onClick={() => setLayout("grid")}
 						title="Grid view"
-						className={`border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all dark:border-white/60 dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] ${
+						className={`border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all dark:border-yellow-300/60 dark:shadow-[2px_2px_0px_0px_rgba(253,224,71,0.25)] ${
 							layout === "grid"
-								? "bg-black text-white dark:bg-white dark:text-black"
-								: "bg-white text-black hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+								? "bg-black text-white dark:bg-yellow-300 dark:text-black"
+								: "bg-white text-black hover:bg-gray-100 dark:bg-[#0C0C0C] dark:text-neutral-200 dark:hover:bg-[#141414]"
 						}`}
 					>
 						<LayoutGrid size={16} />
@@ -193,7 +193,7 @@ export function LinkList() {
 				</div>
 			</div>
 			{filteredLinks.length === 0 ? (
-				<p className="text-lg font-bold text-gray-500 dark:text-gray-400">
+				<p className="text-lg font-bold text-gray-500 dark:text-neutral-500">
 					No links saved yet. Paste one above!
 				</p>
 			) : layout === "list" ? (
@@ -201,7 +201,7 @@ export function LinkList() {
 					{filteredLinks.map((link: Doc<"links">) => (
 						<div
 							key={link._id}
-							className="flex items-center gap-4 border-4 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white/30 dark:bg-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.15)]"
+							className="flex items-center gap-4 border-4 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/40 dark:bg-[#0C0C0C] dark:shadow-[4px_4px_0px_0px_rgba(253,224,71,0.25)]"
 						>
 							{link.favicon && (
 								<img
@@ -217,16 +217,16 @@ export function LinkList() {
 									href={link.url}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="block truncate text-lg font-extrabold text-black underline decoration-2 hover:text-yellow-600 dark:text-gray-100 dark:hover:text-white"
+									className="block truncate text-lg font-extrabold text-black underline decoration-2 hover:text-yellow-600 dark:text-neutral-100 dark:hover:text-yellow-300"
 								>
 									{link.title}
 								</a>
-								<p className="truncate text-sm font-bold text-gray-500 dark:text-gray-400">
+								<p className="truncate text-sm font-bold text-gray-500 dark:text-neutral-500">
 									{link.url}
 								</p>
 							</div>
 							<span
-								className={`shrink-0 border-2 border-black px-3 py-1 text-xs font-extrabold dark:border-gray-600 ${labelColors[link.label] ?? "bg-gray-200"}`}
+								className={`shrink-0 border-2 border-black px-3 py-1 text-xs font-extrabold dark:border-yellow-300/30 ${labelColors[link.label] ?? "bg-gray-200"}`}
 							>
 								{link.label}
 							</span>
@@ -248,7 +248,7 @@ export function LinkList() {
 							href={link.url}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex flex-col border-4 border-black bg-white p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white/30 dark:bg-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.15)] dark:hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)]"
+							className="flex flex-col border-4 border-black bg-white p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/40 dark:bg-[#0C0C0C] dark:shadow-[4px_4px_0px_0px_rgba(253,224,71,0.25)] dark:hover:shadow-[6px_6px_0px_0px_rgba(253,224,71,0.35)]"
 						>
 							<div className="mb-2 flex items-start justify-between gap-1">
 								{link.favicon ? (
@@ -273,10 +273,10 @@ export function LinkList() {
 									<Trash2 size={12} />
 								</button>
 							</div>
-							<p className="mb-2 line-clamp-2 flex-1 text-sm font-extrabold text-black dark:text-gray-100">
+							<p className="mb-2 line-clamp-2 flex-1 text-sm font-extrabold text-black dark:text-neutral-100">
 								{link.title}
 							</p>
-							<p className="mb-2 truncate text-xs font-bold text-gray-500 dark:text-gray-400">
+							<p className="mb-2 truncate text-xs font-bold text-gray-500 dark:text-neutral-500">
 								{(() => {
 									try {
 										return new URL(link.url).hostname;
@@ -286,7 +286,7 @@ export function LinkList() {
 								})()}
 							</p>
 							<span
-								className={`self-start border-2 border-black px-2 py-0.5 text-xs font-extrabold dark:border-gray-600 ${labelColors[link.label] ?? "bg-gray-200"}`}
+								className={`self-start border-2 border-black px-2 py-0.5 text-xs font-extrabold dark:border-yellow-300/30 ${labelColors[link.label] ?? "bg-gray-200"}`}
 							>
 								{link.label}
 							</span>
@@ -304,7 +304,7 @@ export function LinkList() {
 						onClick={() => setShowModal(false)}
 						onKeyDown={() => {}}
 					/>
-					<div className="relative mx-4 w-full max-w-sm border-4 border-black bg-amber-50 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-white/30 dark:bg-gray-900 dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.15)]">
+					<div className="relative mx-4 w-full max-w-sm border-4 border-black bg-amber-50 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/40 dark:bg-[#0C0C0C] dark:shadow-[8px_8px_0px_0px_rgba(253,224,71,0.25)]">
 						<button
 							type="button"
 							onClick={() => setShowModal(false)}
@@ -313,14 +313,14 @@ export function LinkList() {
 							<X size={16} />
 						</button>
 
-						<h2 className="mb-4 text-xl font-extrabold text-black dark:text-gray-100">
+						<h2 className="mb-4 text-xl font-extrabold text-black dark:text-neutral-100">
 							New Label
 						</h2>
 
 						<form onSubmit={handleCreateLabel} className="flex flex-col gap-4">
 							<div>
 								{/** biome-ignore lint/a11y/noLabelWithoutControl: Temporary Disabled */}
-								<label className="mb-1 block text-sm font-extrabold text-black dark:text-gray-200">
+								<label className="mb-1 block text-sm font-extrabold text-black dark:text-neutral-200">
 									Name
 								</label>
 								<input
@@ -332,13 +332,13 @@ export function LinkList() {
 									required
 									// biome-ignore lint/a11y/noAutofocus: autofocus input
 									autoFocus
-									className="w-full border-2 border-black bg-white px-3 py-2 text-base font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-white/30 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:ring-white/40"
+									className="w-full border-2 border-black bg-white px-3 py-2 text-base font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-yellow-300/40 dark:bg-[#141414] dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-yellow-300/60"
 								/>
 							</div>
 
 							<div>
 								{/** biome-ignore lint/a11y/noLabelWithoutControl: Temporary Disabled */}
-								<label className="mb-2 block text-sm font-extrabold text-black dark:text-gray-200">
+								<label className="mb-2 block text-sm font-extrabold text-black dark:text-neutral-200">
 									Color
 								</label>
 								<div className="flex flex-wrap gap-2">
@@ -349,8 +349,8 @@ export function LinkList() {
 											onClick={() => setNewLabelColor(c.value)}
 											className={`${c.value} h-8 w-8 border-2 transition-all ${
 												newLabelColor === c.value
-													? "scale-110 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]"
-													: "border-gray-400 hover:border-black dark:border-gray-600 dark:hover:border-white/60"
+													? "scale-110 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300 dark:shadow-[2px_2px_0px_0px_rgba(253,224,71,0.3)]"
+													: "border-gray-400 hover:border-black dark:border-yellow-300/20 dark:hover:border-yellow-300/60"
 											}`}
 											title={c.label}
 										/>
@@ -361,7 +361,7 @@ export function LinkList() {
 							<button
 								type="submit"
 								disabled={!newLabelName.trim()}
-								className="border-2 border-black bg-yellow-300 px-4 py-2 text-base font-extrabold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/30 dark:bg-white dark:text-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
+								className="border-2 border-black bg-yellow-300 px-4 py-2 text-base font-extrabold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-yellow-300/40 dark:bg-yellow-300 dark:text-black dark:shadow-[4px_4px_0px_0px_rgba(253,224,71,0.25)]"
 							>
 								Create Label
 							</button>
@@ -379,7 +379,7 @@ export function LinkList() {
 						onClick={() => setRenamingLabel(null)}
 						onKeyDown={() => {}}
 					/>
-					<div className="relative mx-4 w-full max-w-sm border-4 border-black bg-amber-50 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-white/30 dark:bg-gray-900 dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.15)]">
+					<div className="relative mx-4 w-full max-w-sm border-4 border-black bg-amber-50 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/40 dark:bg-[#0C0C0C] dark:shadow-[8px_8px_0px_0px_rgba(253,224,71,0.25)]">
 						<button
 							type="button"
 							onClick={() => setRenamingLabel(null)}
@@ -388,14 +388,14 @@ export function LinkList() {
 							<X size={16} />
 						</button>
 
-						<h2 className="mb-4 text-xl font-extrabold text-black dark:text-gray-100">
+						<h2 className="mb-4 text-xl font-extrabold text-black dark:text-neutral-100">
 							Rename Label
 						</h2>
 
 						<form onSubmit={handleRenameSubmit} className="flex flex-col gap-4">
 							<div>
 								{/** biome-ignore lint/a11y/noLabelWithoutControl: Temporary Disabled */}
-								<label className="mb-1 block text-sm font-extrabold text-black dark:text-gray-200">
+								<label className="mb-1 block text-sm font-extrabold text-black dark:text-neutral-200">
 									Name
 								</label>
 								<input
@@ -405,7 +405,7 @@ export function LinkList() {
 									required
 									// biome-ignore lint/a11y/noAutofocus: need an autofocus here
 									autoFocus
-									className="w-full border-2 border-black bg-white px-3 py-2 text-base font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-white/30 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:ring-white/40"
+									className="w-full border-2 border-black bg-white px-3 py-2 text-base font-bold text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 dark:border-yellow-300/40 dark:bg-[#141414] dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-yellow-300/60"
 								/>
 							</div>
 
@@ -415,7 +415,7 @@ export function LinkList() {
 									!renameValue.trim() ||
 									renameValue.trim() === renamingLabel.name
 								}
-								className="border-2 border-black bg-yellow-300 px-4 py-2 text-base font-extrabold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/30 dark:bg-white dark:text-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
+								className="border-2 border-black bg-yellow-300 px-4 py-2 text-base font-extrabold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-yellow-300/40 dark:bg-yellow-300 dark:text-black dark:shadow-[4px_4px_0px_0px_rgba(253,224,71,0.25)]"
 							>
 								Save
 							</button>
