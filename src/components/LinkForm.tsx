@@ -22,6 +22,37 @@ export function LinkForm() {
 		}
 	}, [labels, label]);
 
+	useEffect(() => {
+		const isUrl = (value: string) => {
+			try {
+				const parsed = new URL(value);
+				return parsed.protocol === "http:" || parsed.protocol === "https:";
+			} catch {
+				return false;
+			}
+		};
+
+		const readClipboard = async () => {
+			if (!navigator.clipboard?.readText) return;
+			try {
+				const text = (await navigator.clipboard.readText()).trim();
+				if (text && isUrl(text)) {
+					setUrl((current) => (current ? current : text));
+				}
+			} catch {
+				// Clipboard access denied or unavailable; ignore silently.
+			}
+		};
+
+		readClipboard();
+
+		const handleFocus = () => {
+			readClipboard();
+		};
+		window.addEventListener("focus", handleFocus);
+		return () => window.removeEventListener("focus", handleFocus);
+	}, []);
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		const trimmed = url.trim();
