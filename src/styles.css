@@ -16,3 +16,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.app-grid-bg {
+	background:
+		linear-gradient(90deg, rgb(0 0 0 / 0.06) 1px, transparent 1px),
+		linear-gradient(rgb(0 0 0 / 0.06) 1px, transparent 1px),
+		#fffbeb;
+	background-size: 28px 28px;
+}
+
+.dark .app-grid-bg {
+	background:
+		linear-gradient(90deg, rgb(253 224 71 / 0.08) 1px, transparent 1px),
+		linear-gradient(rgb(253 224 71 / 0.08) 1px, transparent 1px),
+		#000;
+	background-size: 28px 28px;
+}
