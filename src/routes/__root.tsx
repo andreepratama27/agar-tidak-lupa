@@ -41,7 +41,7 @@ function RootLayout() {
 		<ThemeProvider>
 			<div className="app-grid-bg min-h-screen transition-colors">
 				<div className="mx-auto flex max-w-4xl items-center justify-between px-4 pt-6 pb-2">
-					<p className="inline-block rotate-[-1deg] border-3 border-black bg-yellow-300 px-3 py-1 text-sm font-extrabold uppercase tracking-widest text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/40 dark:bg-[#141414] dark:text-yellow-300 dark:shadow-[3px_3px_0px_0px_rgba(253,224,71,0.25)]">
+					<p className="inline-block rotate-[-1deg] border-3 border-black bg-yellow-300 px-3 py-1 text-sm font-extrabold uppercase tracking-widest text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/80 dark:bg-black dark:text-yellow-200 dark:shadow-[3px_3px_0px_0px_rgba(250,204,21,0.35)]">
 						Agar Tidak Lupa ✏️
 					</p>
 					<ThemeToggle />

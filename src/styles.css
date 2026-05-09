@@ -27,8 +27,9 @@ code {
 
 .dark .app-grid-bg {
 	background:
-		linear-gradient(90deg, rgb(253 224 71 / 0.08) 1px, transparent 1px),
-		linear-gradient(rgb(253 224 71 / 0.08) 1px, transparent 1px),
+		radial-gradient(circle at top left, rgb(250 204 21 / 0.04), transparent 30rem),
+		linear-gradient(90deg, rgb(250 204 21 / 0.035) 1px, transparent 1px),
+		linear-gradient(rgb(250 204 21 / 0.035) 1px, transparent 1px),
 		#000;
 	background-size: 28px 28px;
 }

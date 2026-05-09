@@ -11,7 +11,7 @@ export function ContextMenuContent({
 		<ContextMenuPrimitive.Portal>
 			<ContextMenuPrimitive.Content
 				{...props}
-				className="z-50 min-w-[8rem] border-2 border-black bg-white p-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white/30 dark:bg-gray-900 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.15)]"
+				className="z-50 min-w-[8rem] border-2 border-black bg-white p-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/50 dark:bg-[#0a0a0a] dark:shadow-[4px_4px_0px_0px_rgba(250,204,21,0.28)]"
 			>
 				{children}
 			</ContextMenuPrimitive.Content>
@@ -27,7 +27,7 @@ export function ContextMenuItem({
 	return (
 		<ContextMenuPrimitive.Item
 			{...props}
-			className={`flex cursor-pointer select-none items-center px-3 py-1.5 text-sm font-bold text-black outline-none hover:bg-yellow-200 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:text-gray-100 dark:hover:bg-white/10 ${className}`}
+			className={`flex cursor-pointer select-none items-center px-3 py-1.5 text-sm font-bold text-black outline-none hover:bg-yellow-200 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:text-neutral-100 dark:hover:bg-[#171717] ${className}`}
 		>
 			{children}
 		</ContextMenuPrimitive.Item>
@@ -40,7 +40,7 @@ export function ContextMenuSeparator(
 	return (
 		<ContextMenuPrimitive.Separator
 			{...props}
-			className="my-1 h-px bg-black/20 dark:bg-white/20"
+			className="my-1 h-px bg-black/20 dark:bg-yellow-300/20"
 		/>
 	);
 }
