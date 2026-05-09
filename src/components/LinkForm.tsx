@@ -1,12 +1,43 @@
 import { useAction, useMutation, useQuery } from "convex/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { CategoryIcon } from "./CategoryIcon";
+
+const DISMISSED_URLS_KEY = "agar-tidak-lupa:dismissed-clipboard-urls";
+
+const loadDismissedUrls = (): Set<string> => {
+	if (typeof window === "undefined") return new Set();
+	try {
+		const raw = window.sessionStorage.getItem(DISMISSED_URLS_KEY);
+		if (!raw) return new Set();
+		const parsed = JSON.parse(raw);
+		if (Array.isArray(parsed)) return new Set(parsed.filter((v) => typeof v === "string"));
+	} catch {
+		// Ignore parse / storage errors.
+	}
+	return new Set();
+};
+
+const persistDismissedUrls = (urls: Set<string>) => {
+	if (typeof window === "undefined") return;
+	try {
+		window.sessionStorage.setItem(DISMISSED_URLS_KEY, JSON.stringify([...urls]));
+	} catch {
+		// Ignore quota / storage errors.
+	}
+};
 
 export function LinkForm() {
 	const [url, setUrl] = useState("");
 	const [label, setLabel] = useState("");
 	const [loading, setLoading] = useState(false);
+	const dismissedUrlsRef = useRef<Set<string>>(new Set());
+	const lastPastedUrlRef = useRef<string | null>(null);
+
+	const dismissUrl = (value: string) => {
+		dismissedUrlsRef.current.add(value);
+		persistDismissedUrls(dismissedUrlsRef.current);
+	};
 
 	const labels = useQuery(api.labels.list);
 	const seedLabels = useMutation(api.labels.seed);
@@ -24,6 +55,8 @@ export function LinkForm() {
 	}, [labels, label]);
 
 	useEffect(() => {
+		dismissedUrlsRef.current = loadDismissedUrls();
+
 		const isUrl = (value: string) => {
 			try {
 				const parsed = new URL(value);
@@ -37,8 +70,12 @@ export function LinkForm() {
 			if (!navigator.clipboard?.readText) return;
 			try {
 				const text = (await navigator.clipboard.readText()).trim();
-				if (text && isUrl(text)) {
-					setUrl((current) => (current ? current : text));
+				if (text && isUrl(text) && !dismissedUrlsRef.current.has(text)) {
+					setUrl((current) => {
+						if (current) return current;
+						lastPastedUrlRef.current = text;
+						return text;
+					});
 				}
 			} catch {
 				// Clipboard access denied or unavailable; ignore silently.
@@ -68,6 +105,8 @@ export function LinkForm() {
 				favicon: metadata.favicon ?? undefined,
 				label,
 			});
+			dismissUrl(trimmed);
+			lastPastedUrlRef.current = null;
 			setUrl("");
 		} finally {
 			setLoading(false);
@@ -82,9 +121,16 @@ export function LinkForm() {
 				type="url"
 				value={url}
 				onChange={(e) => {
-					setUrl(e.target.value);
-					if (!e.target.value.trim() && labels?.[0]) {
-						setLabel(labels[0].name);
+					const newValue = e.target.value;
+					setUrl(newValue);
+					if (!newValue.trim()) {
+						if (lastPastedUrlRef.current) {
+							dismissUrl(lastPastedUrlRef.current);
+							lastPastedUrlRef.current = null;
+						}
+						if (labels?.[0]) {
+							setLabel(labels[0].name);
+						}
 					}
 				}}
 				placeholder="Paste a link..."
