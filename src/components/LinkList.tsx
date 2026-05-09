@@ -3,6 +3,7 @@ import { LayoutGrid, LayoutList, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Doc } from "../../convex/_generated/dataModel";
+import { CategoryIcon } from "./CategoryIcon";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -127,12 +128,13 @@ export function LinkList() {
 											onClick={() =>
 												setFilterLabel(filterLabel === l.name ? "" : l.name)
 											}
-											className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
+											className={`inline-flex items-center gap-1.5 border-2 px-2 py-1 text-sm font-bold transition-all ${
 												filterLabel === l.name
 													? "border-black bg-yellow-300 text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/80 dark:bg-yellow-300 dark:text-black dark:shadow-[2px_2px_0px_0px_rgba(250,204,21,0.35)]"
 													: "border-black bg-white text-black hover:bg-gray-100 dark:border-yellow-300/35 dark:bg-[#0a0a0a] dark:text-neutral-100 dark:hover:bg-[#171717]"
 											}`}
 										>
+											<CategoryIcon label={l.name} className="h-5 w-5" />
 											{l.name}
 										</button>
 									</ContextMenuTrigger>
@@ -226,8 +228,9 @@ export function LinkList() {
 								</p>
 							</div>
 							<span
-								className={`shrink-0 border-2 border-black px-3 py-1 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
+								className={`inline-flex shrink-0 items-center gap-1.5 border-2 border-black px-2 py-1 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
 							>
+								<CategoryIcon label={link.label} className="h-5 w-5" />
 								{link.label}
 							</span>
 							<button
@@ -286,8 +289,9 @@ export function LinkList() {
 								})()}
 							</p>
 							<span
-								className={`self-start border-2 border-black px-2 py-0.5 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
+								className={`inline-flex self-start items-center gap-1.5 border-2 border-black px-2 py-0.5 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
 							>
+								<CategoryIcon label={link.label} className="h-5 w-5" />
 								{link.label}
 							</span>
 						</a>

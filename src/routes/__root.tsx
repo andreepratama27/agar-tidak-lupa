@@ -41,9 +41,11 @@ function RootLayout() {
 		<ThemeProvider>
 			<div className="app-grid-bg min-h-screen transition-colors">
 				<div className="mx-auto flex max-w-4xl items-center justify-between px-4 pt-6 pb-2">
-					<p className="inline-block rotate-[-1deg] border-3 border-black bg-yellow-300 px-3 py-1 text-sm font-extrabold uppercase tracking-widest text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/80 dark:bg-black dark:text-yellow-200 dark:shadow-[3px_3px_0px_0px_rgba(250,204,21,0.35)]">
-						Agar Tidak Lupa ✏️
-					</p>
+					<img
+						src="/images/agar-tidak-lupa-logo.png"
+						alt="Agar Tidak Lupa"
+						className="h-12 w-auto rotate-[-1deg] border-3 border-black bg-yellow-300 object-contain shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/80 dark:bg-black dark:shadow-[3px_3px_0px_0px_rgba(250,204,21,0.35)]"
+					/>
 					<ThemeToggle />
 				</div>
 				<main className="mx-auto max-w-4xl px-4 py-6">

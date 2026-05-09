@@ -1,6 +1,7 @@
 import { useAction, useMutation, useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import { api } from "../../convex/_generated/api";
+import { CategoryIcon } from "./CategoryIcon";
 
 export function LinkForm() {
 	const [url, setUrl] = useState("");
@@ -104,7 +105,7 @@ export function LinkForm() {
 							key={l._id}
 							type="button"
 							onClick={() => setLabel(l.name)}
-							className={`border-2 border-black px-3 py-1 text-sm font-extrabold transition-all
+							className={`inline-flex items-center gap-1.5 border-2 border-black px-2 py-1 text-sm font-extrabold transition-all
 									${
 										label === l.name
 											? "bg-yellow-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:bg-yellow-300 dark:text-black dark:shadow-[2px_2px_0px_0px_rgba(250,204,21,0.35)]"
@@ -112,6 +113,7 @@ export function LinkForm() {
 									}
 									dark:border-yellow-300/40`}
 						>
+							<CategoryIcon label={l.name} className="h-5 w-5" />
 							{l.name}
 						</button>
 					))}
