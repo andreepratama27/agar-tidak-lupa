@@ -1,8 +1,15 @@
 import { useMutation, useQuery } from "convex/react";
-import { LayoutGrid, LayoutList, Plus, Trash2, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import {
+	LayoutGrid,
+	LayoutList,
+	Plus,
+	RotateCcw,
+	Trash2,
+	X,
+} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../../convex/_generated/api";
-import type { Doc } from "../../convex/_generated/dataModel";
+import type { Doc, Id } from "../../convex/_generated/dataModel";
 import { CategoryIcon } from "./CategoryIcon";
 import { LoadingLinksAnimation } from "./LoadingLinksAnimation";
 import {
@@ -35,6 +42,16 @@ const normalizeUrl = (url: string) => {
 	}
 };
 
+type DeletedLink = Pick<
+	Doc<"links">,
+	"_id" | "url" | "title" | "favicon" | "label" | "savedAt"
+>;
+
+type PendingDelete = {
+	link: DeletedLink;
+	deadline: number;
+};
+
 function DuplicateStamp() {
 	return (
 		<img
@@ -58,8 +75,13 @@ export function LinkList() {
 	const [, setLabel] = useState("");
 	const [filterLabel, setFilterLabel] = useState("");
 	const [showModal, setShowModal] = useState(false);
+	const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(
+		null,
+	);
+	const [secondsLeft, setSecondsLeft] = useState(5);
 	const [newLabelName, setNewLabelName] = useState("");
 	const [newLabelColor, setNewLabelColor] = useState(COLOR_OPTIONS[0].value);
+	const deleteTimeoutRef = useRef<number | null>(null);
 
 	const [layout, setLayout] = useState<"list" | "grid">(
 		() =>
@@ -76,6 +98,30 @@ export function LinkList() {
 	useEffect(() => {
 		localStorage.setItem("link-layout", layout);
 	}, [layout]);
+
+	useEffect(() => {
+		if (!pendingDelete) return;
+
+		setSecondsLeft(
+			Math.max(0, Math.ceil((pendingDelete.deadline - Date.now()) / 1000)),
+		);
+
+		const interval = window.setInterval(() => {
+			setSecondsLeft(
+				Math.max(0, Math.ceil((pendingDelete.deadline - Date.now()) / 1000)),
+			);
+		}, 250);
+
+		return () => window.clearInterval(interval);
+	}, [pendingDelete]);
+
+	useEffect(() => {
+		return () => {
+			if (deleteTimeoutRef.current) {
+				window.clearTimeout(deleteTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	const handleCreateLabel = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -108,6 +154,45 @@ export function LinkList() {
 			setFilterLabel("");
 		}
 		await removeLabel({ id: label._id });
+	};
+
+	const commitPendingDelete = async (id: Id<"links">) => {
+		setPendingDelete((current) => (current?.link._id === id ? null : current));
+		await removeLink({ id });
+	};
+
+	const handleDeleteLink = (link: Doc<"links">) => {
+		if (deleteTimeoutRef.current) {
+			window.clearTimeout(deleteTimeoutRef.current);
+		}
+		if (pendingDelete && pendingDelete.link._id !== link._id) {
+			void removeLink({ id: pendingDelete.link._id });
+		}
+
+		setPendingDelete({
+			link: {
+				_id: link._id,
+				url: link.url,
+				title: link.title,
+				favicon: link.favicon,
+				label: link.label,
+				savedAt: link.savedAt,
+			},
+			deadline: Date.now() + 5000,
+		});
+
+		deleteTimeoutRef.current = window.setTimeout(() => {
+			commitPendingDelete(link._id);
+			deleteTimeoutRef.current = null;
+		}, 5000);
+	};
+
+	const handleUndoDelete = () => {
+		if (deleteTimeoutRef.current) {
+			window.clearTimeout(deleteTimeoutRef.current);
+			deleteTimeoutRef.current = null;
+		}
+		setPendingDelete(null);
 	};
 
 	const labelColors: Record<string, string> = {};
@@ -143,6 +228,9 @@ export function LinkList() {
 	const filteredLinks = filterLabel
 		? links.filter((link) => link.label === filterLabel)
 		: links;
+	const visibleLinks = pendingDelete
+		? filteredLinks.filter((link) => link._id !== pendingDelete.link._id)
+		: filteredLinks;
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -235,13 +323,13 @@ export function LinkList() {
 					</button>
 				</div>
 			</div>
-			{filteredLinks.length === 0 ? (
+			{visibleLinks.length === 0 ? (
 				<p className="text-lg font-bold text-gray-500 dark:text-stone-400">
 					No links saved yet. Paste one above!
 				</p>
 			) : layout === "list" ? (
 				<div className="flex flex-col gap-3">
-					{filteredLinks.map((link: Doc<"links">) => {
+					{visibleLinks.map((link: Doc<"links">) => {
 						const isDuplicate = duplicateUrls.has(normalizeUrl(link.url));
 
 						return (
@@ -283,7 +371,7 @@ export function LinkList() {
 								</span>
 								<button
 									type="button"
-									onClick={() => removeLink({ id: link._id })}
+									onClick={() => handleDeleteLink(link)}
 									className="shrink-0 border-2 border-black bg-red-200 p-2 font-extrabold hover:bg-red-400 dark:border-red-300 dark:bg-red-950 dark:text-red-100 dark:hover:bg-red-800"
 								>
 									<Trash2 size={16} />
@@ -295,7 +383,7 @@ export function LinkList() {
 				</div>
 			) : (
 				<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-					{filteredLinks.map((link: Doc<"links">) => {
+					{visibleLinks.map((link: Doc<"links">) => {
 						const isDuplicate = duplicateUrls.has(normalizeUrl(link.url));
 
 						return (
@@ -326,7 +414,7 @@ export function LinkList() {
 										type="button"
 										onClick={(e) => {
 											e.preventDefault();
-											removeLink({ id: link._id });
+											handleDeleteLink(link);
 										}}
 										className="shrink-0 border-2 border-black bg-red-200 p-1 font-extrabold hover:bg-red-400 dark:border-red-300 dark:bg-red-950 dark:text-red-100 dark:hover:bg-red-800"
 									>
@@ -483,6 +571,37 @@ export function LinkList() {
 								Save
 							</button>
 						</form>
+					</div>
+				</div>
+			)}
+
+			{pendingDelete && (
+				<div className="fixed right-4 bottom-4 left-4 z-50 border-4 border-black bg-white p-3 text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:left-auto sm:w-[24rem] dark:border-yellow-300/60 dark:bg-[#0a0a0a] dark:text-neutral-100 dark:shadow-[6px_6px_0px_0px_rgba(250,204,21,0.35)]">
+					<div className="flex items-center justify-between gap-3">
+						<div className="min-w-0">
+							<p className="truncate text-sm font-extrabold">
+								Deleted {pendingDelete.link.title}
+							</p>
+							<p className="text-xs font-bold text-gray-500 dark:text-stone-400">
+								Deleting in {secondsLeft}s
+							</p>
+						</div>
+						<button
+							type="button"
+							onClick={handleUndoDelete}
+							className="inline-flex shrink-0 items-center gap-1.5 border-2 border-black bg-yellow-300 px-3 py-1.5 text-sm font-extrabold text-black transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none dark:border-yellow-300/80 dark:bg-yellow-300"
+						>
+							<RotateCcw size={14} />
+							Undo
+						</button>
+					</div>
+					<div className="mt-3 h-2 border-2 border-black bg-gray-100 dark:border-yellow-300/45 dark:bg-[#171717]">
+						<div
+							className="h-full bg-yellow-300 transition-[width] duration-200"
+							style={{
+								width: `${Math.max(0, Math.min(100, (secondsLeft / 5) * 100))}%`,
+							}}
+						/>
 					</div>
 				</div>
 			)}
