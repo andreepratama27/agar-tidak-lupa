@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Doc } from "../../convex/_generated/dataModel";
 import { CategoryIcon } from "./CategoryIcon";
+import { LoadingLinksAnimation } from "./LoadingLinksAnimation";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -39,7 +40,10 @@ export function LinkList() {
 	const [newLabelColor, setNewLabelColor] = useState(COLOR_OPTIONS[0].value);
 
 	const [layout, setLayout] = useState<"list" | "grid">(
-		() => (localStorage.getItem("link-layout") as "list" | "grid") ?? "list",
+		() =>
+			(typeof window !== "undefined"
+				? (localStorage.getItem("link-layout") as "list" | "grid")
+				: null) ?? "list",
 	);
 
 	const [renamingLabel, setRenamingLabel] = useState<Doc<"labels"> | null>(
@@ -93,9 +97,9 @@ export function LinkList() {
 
 	if (links === undefined) {
 		return (
-			<p className="text-lg font-bold text-gray-500 dark:text-stone-400">
-				Loading links...
-			</p>
+			<div className="flex justify-center py-8">
+				<LoadingLinksAnimation />
+			</div>
 		);
 	}
 

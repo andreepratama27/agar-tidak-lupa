@@ -1,11 +1,7 @@
 # AGENTS.md — Agar Tidak Lupa
 
-## Commands
-- Dev: `npm run dev` (port 3000) + `npx convex dev` (backend)
-- Build: `npm run build` | Test: `npm run test` | Single test: `npx vitest run src/path/to/file.test.ts`
-- Lint: `npm run lint` | Format: `npm run format` | Check: `npm run check`
-
 ## Architecture
+- This project is using pnpm as package manager
 - **Frontend:** TanStack Start + Router (file-based routes in `src/routes/`), React 19, Vite, deployed on Netlify.
 - **Backend:** Convex (`convex/` dir) — schema in `convex/schema.ts`, queries/mutations as exported functions.
 - **Styling:** Tailwind CSS v4 — Neo Brutalism design system. Styles in `src/styles.css`.
