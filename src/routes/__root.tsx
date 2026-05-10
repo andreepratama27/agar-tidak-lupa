@@ -4,7 +4,9 @@ import {
 	Link,
 	Outlet,
 	Scripts,
+	useLocation,
 } from "@tanstack/react-router";
+import { SearchCommand } from "../components/SearchCommand";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { ThemeToggle } from "../components/ThemeToggle";
 import ConvexProvider from "../integrations/convex/provider";
@@ -38,6 +40,9 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
+	const location = useLocation();
+	const isLandingPage = location.pathname === "/";
+
 	return (
 		<ThemeProvider>
 			<div className="app-grid-bg min-h-screen transition-colors">
@@ -50,12 +55,15 @@ function RootLayout() {
 						/>
 					</Link>
 					<div className="flex items-center gap-3">
-						<Link
-							to="/main"
-							className="hidden border-2 border-black bg-white px-3 py-2 text-sm font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:inline-flex dark:border-yellow-300/45 dark:bg-[#0a0a0a] dark:text-neutral-100 dark:shadow-[3px_3px_0px_0px_rgba(250,204,21,0.24)]"
-						>
-							Open app
-						</Link>
+						{isLandingPage && (
+							<Link
+								to="/main"
+								className="hidden border-2 border-black bg-white px-3 py-2 text-sm font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:inline-flex dark:border-yellow-300/45 dark:bg-[#0a0a0a] dark:text-neutral-100 dark:shadow-[3px_3px_0px_0px_rgba(250,204,21,0.24)]"
+							>
+								Open app
+							</Link>
+						)}
+						<SearchCommand />
 						<ThemeToggle />
 					</div>
 				</div>
