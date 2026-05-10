@@ -8,6 +8,7 @@ import {
 	X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { displayLinkTitle } from "@/lib/linkTitle";
 import { api } from "../../convex/_generated/api";
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import { CategoryIcon } from "./CategoryIcon";
@@ -357,7 +358,7 @@ export function LinkList() {
 										rel="noopener noreferrer"
 										className="block truncate text-lg font-extrabold text-black underline decoration-2 hover:text-yellow-600 dark:text-neutral-100 dark:hover:text-yellow-200"
 									>
-										{link.title}
+										{displayLinkTitle(link)}
 									</a>
 									<p className="truncate text-sm font-bold text-gray-500 dark:text-stone-400">
 										{link.url}
@@ -422,7 +423,7 @@ export function LinkList() {
 									</button>
 								</div>
 								<p className="mb-2 line-clamp-2 flex-1 text-sm font-extrabold text-black dark:text-neutral-100">
-									{link.title}
+									{displayLinkTitle(link)}
 								</p>
 								<p className="mb-2 truncate text-xs font-bold text-gray-500 dark:text-stone-400">
 									{(() => {
@@ -580,7 +581,7 @@ export function LinkList() {
 					<div className="flex items-center justify-between gap-3">
 						<div className="min-w-0">
 							<p className="truncate text-sm font-extrabold">
-								Deleted {pendingDelete.link.title}
+								Deleted {displayLinkTitle(pendingDelete.link)}
 							</p>
 							<p className="text-xs font-bold text-gray-500 dark:text-stone-400">
 								Deleting in {secondsLeft}s

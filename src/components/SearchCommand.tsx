@@ -1,6 +1,7 @@
 import { useQuery } from "convex/react";
 import { ExternalLink, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { displayLinkTitle } from "@/lib/linkTitle";
 import { searchLinks } from "@/lib/search";
 import { api } from "../../convex/_generated/api";
 import type { Doc } from "../../convex/_generated/dataModel";
@@ -144,7 +145,9 @@ function SearchResultItem({
 				<Search className="h-5 w-5 shrink-0" />
 			)}
 			<div className="min-w-0 flex-1">
-				<p className="truncate text-base font-black">{link.title}</p>
+				<p className="truncate text-base font-black">
+					{displayLinkTitle(link)}
+				</p>
 				<p className="truncate text-xs font-bold text-neutral-500 dark:text-stone-400">
 					{hostname(link.url)}
 				</p>

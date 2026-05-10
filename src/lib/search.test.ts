@@ -39,6 +39,38 @@ describe("searchLinks", () => {
 		expect(results[0]?.item._id).toBe("3");
 	});
 
+	it("searches decoded title entities", () => {
+		const results = searchLinks(
+			[
+				{
+					_id: "encoded",
+					title: "Tom &amp; Jerry&rsquo;s guide",
+					url: "https://example.com/cartoon",
+					label: "Article",
+				},
+			],
+			"jerry's",
+		);
+
+		expect(results[0]?.item._id).toBe("encoded");
+	});
+
+	it("searches X post fallback titles", () => {
+		const results = searchLinks(
+			[
+				{
+					_id: "x-post",
+					title: "x.com",
+					url: "https://x.com/addyosmani/status/2053231239721885918",
+					label: "Post",
+				},
+			],
+			"addyosmani",
+		);
+
+		expect(results[0]?.item._id).toBe("x-post");
+	});
+
 	it("respects the result limit", () => {
 		const results = searchLinks(links, "example", 1);
 

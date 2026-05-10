@@ -1,5 +1,13 @@
 import { v } from "convex/values"
 import { action, mutation, query } from "./_generated/server"
+import {
+	extractTitle,
+	fallbackTitleForUrl,
+	isGenericXTitle,
+	isXUrl,
+	titleForUrl,
+	titleFromXEmbedHtml,
+} from "./metadata"
 
 export const list = query({
 	args: {},
@@ -18,7 +26,7 @@ export const add = mutation({
 	handler: async (ctx, args) => {
 		await ctx.db.insert("links", {
 			url: args.url,
-			title: args.title,
+			title: titleForUrl(args.title, args.url),
 			favicon: args.favicon,
 			label: args.label,
 			savedAt: Date.now(),
@@ -47,6 +55,7 @@ export const fetchMetadata = action({
 			return { title: args.url, favicon: null }
 		}
 
+		const fallbackTitle = fallbackTitleForUrl(args.url, hostname)
 		const fallbackFavicon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`
 
 		try {
@@ -63,11 +72,10 @@ export const fetchMetadata = action({
 
 			const html = await response.text()
 
-			// Extract <title>
-			const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
-			const title = titleMatch
-				? titleMatch[1].trim().replace(/\s+/g, " ")
-				: hostname
+			const extractedTitle = extractTitle(html, fallbackTitle)
+			const title = isGenericXTitle(extractedTitle, hostname)
+				? await fetchXEmbedTitle(args.url, fallbackTitle)
+				: extractedTitle
 
 			// Extract favicon from <link rel="icon"> or <link rel="shortcut icon">
 			let favicon: string | null = null
@@ -101,7 +109,34 @@ export const fetchMetadata = action({
 
 			return { title, favicon }
 		} catch {
-			return { title: hostname, favicon: fallbackFavicon }
+			return { title: fallbackTitle, favicon: fallbackFavicon }
 		}
 	},
 })
+
+async function fetchXEmbedTitle(url: string, fallbackTitle: string) {
+	let hostname: string
+	try {
+		hostname = new URL(url).hostname
+	} catch {
+		return fallbackTitle
+	}
+	if (!isXUrl(hostname)) return fallbackTitle
+
+	try {
+		const response = await fetch(
+			`https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&omit_script=true`,
+		)
+		if (!response.ok) return fallbackTitle
+		const data = (await response.json()) as {
+			html?: unknown
+			author_name?: unknown
+		}
+		if (typeof data.html !== "string") return fallbackTitle
+		const authorName =
+			typeof data.author_name === "string" ? data.author_name : undefined
+		return titleFromXEmbedHtml(data.html, authorName) ?? fallbackTitle
+	} catch {
+		return fallbackTitle
+	}
+}

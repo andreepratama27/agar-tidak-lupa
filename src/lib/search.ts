@@ -1,3 +1,5 @@
+import { displayLinkTitle } from "./linkTitle";
+
 export type SearchableLink = {
 	_id: string;
 	title: string;
@@ -78,7 +80,7 @@ export function searchLinks<T extends SearchableLink>(
 function linkTokens(link: SearchableLink): string[] {
 	const urlParts = urlSearchText(link.url);
 	return [
-		...repeatTokens(tokenize(link.title), 3),
+		...repeatTokens(tokenize(displayLinkTitle(link)), 3),
 		...repeatTokens(tokenize(link.label), 2),
 		...tokenize(urlParts),
 	];
