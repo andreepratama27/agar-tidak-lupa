@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "convex/react";
 import { LayoutGrid, LayoutList, Plus, Trash2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Doc } from "../../convex/_generated/dataModel";
 import { CategoryIcon } from "./CategoryIcon";
@@ -24,6 +24,28 @@ const COLOR_OPTIONS = [
 	{ value: "bg-teal-200", label: "Teal" },
 	{ value: "bg-gray-200", label: "Gray" },
 ];
+
+const normalizeUrl = (url: string) => {
+	try {
+		const parsed = new URL(url);
+		parsed.hash = "";
+		return parsed.toString().replace(/\/$/, "");
+	} catch {
+		return url.trim();
+	}
+};
+
+function DuplicateStamp() {
+	return (
+		<img
+			src="/images/duplicate-stamp.png"
+			alt="Duplicate link"
+			width={64}
+			height={64}
+			className="pointer-events-none absolute right-2 bottom-2 h-16 w-16 rotate-[-12deg] select-none object-contain"
+		/>
+	);
+}
 
 export function LinkList() {
 	const links = useQuery(api.links.list);
@@ -94,6 +116,21 @@ export function LinkList() {
 			labelColors[l.name] = l.color;
 		}
 	}
+
+	const duplicateUrls = useMemo(() => {
+		if (!links) return new Set<string>();
+
+		const counts = new Map<string, number>();
+		for (const link of links) {
+			const key = normalizeUrl(link.url);
+			counts.set(key, (counts.get(key) ?? 0) + 1);
+		}
+		return new Set(
+			[...counts.entries()]
+				.filter(([, count]) => count > 1)
+				.map(([url]) => url),
+		);
+	}, [links]);
 
 	if (links === undefined) {
 		return (
@@ -204,102 +241,120 @@ export function LinkList() {
 				</p>
 			) : layout === "list" ? (
 				<div className="flex flex-col gap-3">
-					{filteredLinks.map((link: Doc<"links">) => (
-						<div
-							key={link._id}
-							className="flex items-center gap-4 border-4 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/45 dark:bg-[#0a0a0a] dark:shadow-[4px_4px_0px_0px_rgba(250,204,21,0.28)]"
-						>
-							{link.favicon && (
-								<img
-									src={link.favicon}
-									alt=""
-									width={16}
-									height={16}
-									className="shrink-0"
-								/>
-							)}
-							<div className="min-w-0 flex-1">
-								<a
-									href={link.url}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="block truncate text-lg font-extrabold text-black underline decoration-2 hover:text-yellow-600 dark:text-neutral-100 dark:hover:text-yellow-200"
-								>
-									{link.title}
-								</a>
-								<p className="truncate text-sm font-bold text-gray-500 dark:text-stone-400">
-									{link.url}
-								</p>
-							</div>
-							<span
-								className={`inline-flex shrink-0 items-center gap-1.5 border-2 border-black px-2 py-1 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
+					{filteredLinks.map((link: Doc<"links">) => {
+						const isDuplicate = duplicateUrls.has(normalizeUrl(link.url));
+
+						return (
+							<div
+								key={link._id}
+								className={`relative flex items-center gap-4 border-4 p-4 ${
+									isDuplicate
+										? "border-red-700 bg-red-50 pb-16 shadow-[4px_4px_0px_0px_rgba(185,28,28,1)] dark:border-red-400 dark:bg-red-950/35 dark:shadow-[4px_4px_0px_0px_rgba(248,113,113,0.45)]"
+										: "border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/45 dark:bg-[#0a0a0a] dark:shadow-[4px_4px_0px_0px_rgba(250,204,21,0.28)]"
+								}`}
 							>
-								<CategoryIcon label={link.label} className="h-5 w-5" />
-								{link.label}
-							</span>
-							<button
-								type="button"
-								onClick={() => removeLink({ id: link._id })}
-								className="shrink-0 border-2 border-black bg-red-200 p-2 font-extrabold hover:bg-red-400 dark:border-red-300 dark:bg-red-950 dark:text-red-100 dark:hover:bg-red-800"
-							>
-								<Trash2 size={16} />
-							</button>
-						</div>
-					))}
-				</div>
-			) : (
-				<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-					{filteredLinks.map((link: Doc<"links">) => (
-						<a
-							key={link._id}
-							href={link.url}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="flex flex-col border-4 border-black bg-white p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/45 dark:bg-[#0a0a0a] dark:shadow-[4px_4px_0px_0px_rgba(250,204,21,0.28)] dark:hover:shadow-[6px_6px_0px_0px_rgba(250,204,21,0.4)]"
-						>
-							<div className="mb-2 flex items-start justify-between gap-1">
-								{link.favicon ? (
+								{link.favicon && (
 									<img
 										src={link.favicon}
 										alt=""
 										width={16}
 										height={16}
-										className="mt-0.5 shrink-0"
+										className="shrink-0"
 									/>
-								) : (
-									<span />
 								)}
+								<div className="min-w-0 flex-1">
+									<a
+										href={link.url}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="block truncate text-lg font-extrabold text-black underline decoration-2 hover:text-yellow-600 dark:text-neutral-100 dark:hover:text-yellow-200"
+									>
+										{link.title}
+									</a>
+									<p className="truncate text-sm font-bold text-gray-500 dark:text-stone-400">
+										{link.url}
+									</p>
+								</div>
+								<span
+									className={`inline-flex shrink-0 items-center gap-1.5 border-2 border-black px-2 py-1 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
+								>
+									<CategoryIcon label={link.label} className="h-5 w-5" />
+									{link.label}
+								</span>
 								<button
 									type="button"
-									onClick={(e) => {
-										e.preventDefault();
-										removeLink({ id: link._id });
-									}}
-									className="shrink-0 border-2 border-black bg-red-200 p-1 font-extrabold hover:bg-red-400 dark:border-red-300 dark:bg-red-950 dark:text-red-100 dark:hover:bg-red-800"
+									onClick={() => removeLink({ id: link._id })}
+									className="shrink-0 border-2 border-black bg-red-200 p-2 font-extrabold hover:bg-red-400 dark:border-red-300 dark:bg-red-950 dark:text-red-100 dark:hover:bg-red-800"
 								>
-									<Trash2 size={12} />
+									<Trash2 size={16} />
 								</button>
+								{isDuplicate && <DuplicateStamp />}
 							</div>
-							<p className="mb-2 line-clamp-2 flex-1 text-sm font-extrabold text-black dark:text-neutral-100">
-								{link.title}
-							</p>
-							<p className="mb-2 truncate text-xs font-bold text-gray-500 dark:text-stone-400">
-								{(() => {
-									try {
-										return new URL(link.url).hostname;
-									} catch {
-										return link.url;
-									}
-								})()}
-							</p>
-							<span
-								className={`inline-flex self-start items-center gap-1.5 border-2 border-black px-2 py-0.5 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
+						);
+					})}
+				</div>
+			) : (
+				<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+					{filteredLinks.map((link: Doc<"links">) => {
+						const isDuplicate = duplicateUrls.has(normalizeUrl(link.url));
+
+						return (
+							<a
+								key={link._id}
+								href={link.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								className={`relative flex flex-col border-4 p-3 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 ${
+									isDuplicate
+										? "border-red-700 bg-red-50 pb-16 shadow-[4px_4px_0px_0px_rgba(185,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(185,28,28,1)] dark:border-red-400 dark:bg-red-950/35 dark:shadow-[4px_4px_0px_0px_rgba(248,113,113,0.45)] dark:hover:shadow-[6px_6px_0px_0px_rgba(248,113,113,0.6)]"
+										: "border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-yellow-300/45 dark:bg-[#0a0a0a] dark:shadow-[4px_4px_0px_0px_rgba(250,204,21,0.28)] dark:hover:shadow-[6px_6px_0px_0px_rgba(250,204,21,0.4)]"
+								}`}
 							>
-								<CategoryIcon label={link.label} className="h-5 w-5" />
-								{link.label}
-							</span>
-						</a>
-					))}
+								<div className="mb-2 flex items-start justify-between gap-1">
+									{link.favicon ? (
+										<img
+											src={link.favicon}
+											alt=""
+											width={16}
+											height={16}
+											className="mt-0.5 shrink-0"
+										/>
+									) : (
+										<span />
+									)}
+									<button
+										type="button"
+										onClick={(e) => {
+											e.preventDefault();
+											removeLink({ id: link._id });
+										}}
+										className="shrink-0 border-2 border-black bg-red-200 p-1 font-extrabold hover:bg-red-400 dark:border-red-300 dark:bg-red-950 dark:text-red-100 dark:hover:bg-red-800"
+									>
+										<Trash2 size={12} />
+									</button>
+								</div>
+								<p className="mb-2 line-clamp-2 flex-1 text-sm font-extrabold text-black dark:text-neutral-100">
+									{link.title}
+								</p>
+								<p className="mb-2 truncate text-xs font-bold text-gray-500 dark:text-stone-400">
+									{(() => {
+										try {
+											return new URL(link.url).hostname;
+										} catch {
+											return link.url;
+										}
+									})()}
+								</p>
+								<span
+									className={`inline-flex self-start items-center gap-1.5 border-2 border-black px-2 py-0.5 text-xs font-extrabold dark:border-black/60 dark:text-black ${labelColors[link.label] ?? "bg-gray-200"}`}
+								>
+									<CategoryIcon label={link.label} className="h-5 w-5" />
+									{link.label}
+								</span>
+								{isDuplicate && <DuplicateStamp />}
+							</a>
+						);
+					})}
 				</div>
 			)}
 
